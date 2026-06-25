@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  username      String   @unique
+  password_hash String
+  role          String   @default("admin")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model CompanyProfile {
+  id              Int      @id @default(autoincrement())
+  name            String?
+  tagline         String?  @db.Text
+  established     String?
+  history         String   @db.Text
+  vision          String   @db.Text
+  mission         String   @db.Text
+  phone           String?
+  email           String?
+  address         String?  @db.Text
+  map_url         String?  @db.Text
+  whatsapp_number String?
+  whatsapp_text   String?  @db.Text
+  hours_weekday   String?
+  hours_saturday  String?
+  hours_sunday    String?
+  hero_title      String?  @db.Text
+  hero_subtitle   String?  @db.Text
+  footer_tagline  String?  @db.Text
+  about_image_url String?  @db.Text
+  workshop_image_url String? @db.Text
+  logo_url        String?  @db.Text
+  home_divisions    String? @db.LongText
+  home_cta_title    String? @db.Text
+  home_cta_desc     String? @db.Text
+  home_credentials_desc String? @db.Text
+  home_workshop_location String? @db.Text
+  home_workshop_acreage  String? @db.Text
+  home_workshop_facilities String? @db.LongText
+  home_procurement_workflow String? @db.LongText
+  home_procurement_support  String? @db.LongText
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Banner {
+  id        Int      @id @default(autoincrement())
+  title     String?
+  image_url String
+  link      String?
+  is_active Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  slug      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id            Int            @id @default(autoincrement())
+  categoryId    Int
+  category      Category       @relation(fields: [categoryId], references: [id])
+  name          String
+  slug          String         @unique
+  description   String         @db.Text
+  specification String?        @db.Text
+  status        String         @default("available")
+  youtube_url   String?        @db.Text
+  images        ProductImage[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model ProductImage {
+  id         Int      @id @default(autoincrement())
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  image_url  String
+  is_primary Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String   @unique
+  content   String   @db.Text
+  image_url String?
+  status    String   @default("draft")
+  authorId  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  fullName  String
+  email     String
+  phone     String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
